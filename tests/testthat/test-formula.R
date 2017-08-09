@@ -7,10 +7,9 @@ test_that("env must be an environment", {
 })
 
 test_that("equivalent to ~", {
-  f1 <- ~abc
-  f2 <- new_quosure(quote(abc))
-
-  expect_identical(set_attrs(f1, class = c("quosure", "formula")), f2)
+  quo <- new_quosure(quote(abc))
+  expect_identical(node_car(quo), quote(`~`))
+  expect_is(quo, "formula")
 })
 
 test_that("is_formula works", {

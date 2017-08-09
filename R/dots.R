@@ -209,15 +209,15 @@ dot_interp <- function(dot, quosured = TRUE) {
   }
 }
 
-dots_enquose <- function(..., `__interp_lhs` = TRUE) {
+dots_enquose <- function(..., `__interp_lhs` = TRUE, `__overscope` = TRUE) {
   dots <- dots_capture(..., `__interp_lhs` = `__interp_lhs`)
-  map(dots, dot_enquose)
+  map(dots, dot_enquose, overscope = `__overscope`)
 }
-dot_enquose <- function(dot) {
+dot_enquose <- function(dot, overscope) {
   if (is_missing(dot$expr)) {
     new_quosure(missing_arg(), empty_env())
   } else {
-    forward_quosure(dot$expr, dot$env)
+    forward_quosure(dot$expr, dot$env, overscope)
   }
 }
 

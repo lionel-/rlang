@@ -20,6 +20,7 @@
 #'    RHS. Unlike `quos()`, it allows named definitions.}
 #' }
 #' @param ... Expressions to capture unevaluated.
+#' @inheritParams quosure
 #' @inheritParams dots_values
 #' @param .named Whether to ensure all dots are named. Unnamed
 #'   elements are processed with [expr_text()] to figure out a default
@@ -65,8 +66,9 @@
 #' dots <- dots_definitions(var = foo(baz) := bar(baz))
 #' dots$defs
 quos <- function(..., .named = FALSE,
-                 .ignore_empty = c("trailing", "none", "all")) {
-  dots <- dots_enquose(...)
+                 .ignore_empty = c("trailing", "none", "all"),
+                 .overscope = TRUE) {
+  dots <- dots_enquose(..., `__overscope` = .overscope)
   dots <- dots_clean_empty(dots, quo_is_missing, .ignore_empty)
 
   if (.named) {

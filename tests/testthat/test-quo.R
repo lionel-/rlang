@@ -73,3 +73,21 @@ test_that("quo_expr() warns", {
   expect_warning(regex = NA, quo_expr(quo(foo), warn = TRUE))
   expect_warning(quo_expr(quo(list(!! quo(foo))), warn = TRUE), "inner quosure")
 })
+
+test_that("quosure is constructed with `overscope` attribute", {
+  expect_true(attr(quo(foo), "overscope"))
+  expect_false(attr(quo(foo, FALSE), "overscope"))
+
+  expect_true(all(map_lgl(quos(foo, bar), attr, "overscope")))
+  expect_false(any(map_lgl(quos(foo, bar, .overscope = FALSE), attr, "overscope")))
+})
+
+test_that("is_quosure() partial matches on overscope attribute", {
+  quo <- quo(foo)
+  expect_true(is_quosure(quo, overscope = TRUE))
+  expect_false(is_quosure(quo, overscope = FALSE))
+
+  safe_quo <- quo(foo, FALSE)
+  expect_true(is_quosure(safe_quo, overscope = FALSE))
+  expect_false(is_quosure(safe_quo, overscope = TRUE))
+})

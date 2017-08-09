@@ -9,7 +9,8 @@
 \usage{
 dots_definitions(..., .named = FALSE)
 
-quos(..., .named = FALSE, .ignore_empty = c("trailing", "none", "all"))
+quos(..., .named = FALSE, .ignore_empty = c("trailing", "none", "all"),
+  .overscope = TRUE)
 
 is_quosures(x)
 }
@@ -25,6 +26,10 @@ name. If an integer, it is passed to the \code{width} argument of
 \item{.ignore_empty}{Whether to ignore empty arguments. Can be one
 of \code{"trailing"}, \code{"none"}, \code{"all"}. If \code{"trailing"}, only the
 last argument is ignored if it is empty.}
+
+\item{.overscope}{Whether the quosure may be overscoped
+by user data. If the quosure is not meant to be evaluated in a
+data context, it is preferable to disable overscoping.}
 
 \item{x}{An object to test.}
 }

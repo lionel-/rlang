@@ -7,14 +7,18 @@
 \alias{enquo}
 \title{Create quosures}
 \usage{
-quo(expr)
+quo(expr, overscope = FALSE)
 
-new_quosure(expr, env = caller_env())
+new_quosure(expr, env = caller_env(), overscope = TRUE)
 
-enquo(arg)
+enquo(arg, overscope = TRUE)
 }
 \arguments{
 \item{expr}{An expression.}
+
+\item{overscope, .overscope}{Whether the quosure may be overscoped
+by user data. If the quosure is not meant to be evaluated in a
+data context, it is preferable to disable overscoping.}
 
 \item{env}{An environment specifying the lexical enclosure of the
 quosure.}
