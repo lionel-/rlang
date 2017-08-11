@@ -1,6 +1,6 @@
 #include "rlang/rlang.h"
 
-#include "rlang/attrs.c"
+#include "rlang/attr.c"
 #include "rlang/cnd.c"
 #include "rlang/env.c"
 #include "rlang/eval.c"
