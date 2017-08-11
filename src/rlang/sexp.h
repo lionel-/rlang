@@ -10,6 +10,9 @@
 bool r_is_shared(SEXP x);
 
 SEXPTYPE r_kind(SEXP x);
+const char* r_type(SEXP x);
+SEXP r_friendly_type(const char* x);
+
 const char* r_sxp_address(SEXP x);
 
 SEXP r_get_attr(SEXP x, SEXP sym);

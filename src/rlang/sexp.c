@@ -20,6 +20,19 @@ SEXP rlang_is_reference(SEXP x, SEXP y) {
 SEXPTYPE r_kind(SEXP x) {
   return TYPEOF(x);
 }
+const char* r_type(SEXP x) {
+  return r_as_c_string(Rf_type2str(TYPEOF(x)));
+}
+SEXP r_friendly_type(const char* type) {
+  SEXP fn = rlang_obj("friendly_type_of");
+  SEXP args = r_new_pairlist(r_new_scalar_string(type));
+  SEXP lang = KEEP(r_new_language(fn, args));
+
+  SEXP friendly_type = r_eval(lang, r_empty_env);
+
+  FREE(1);
+  return friendly_type;
+}
 
 SEXP r_mut_kind(SEXP x, SEXPTYPE kind) {
   SET_TYPEOF(x, kind);
