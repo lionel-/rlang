@@ -26,7 +26,7 @@ SEXP r_f_env(SEXP f) {
 }
 
 bool r_f_has_env(SEXP f) {
-  return r_is_env(r_f_env(f));
+  return r_is_environment(r_f_env(f));
 }
 
 SEXP r_set_formula_env(SEXP f, SEXP new_env) {
