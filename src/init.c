@@ -56,7 +56,9 @@ extern SEXP r_new_language_(SEXP, SEXP);
 extern SEXP rlang_cnd_abort(SEXP, SEXP);
 extern SEXP rlang_cnd_inform(SEXP, SEXP);
 extern SEXP rlang_cnd_signal(SEXP, SEXP);
+extern SEXP rlang_cnd_signal_error(SEXP, SEXP);
 extern SEXP rlang_cnd_warn(SEXP, SEXP);
+extern SEXP r_set_env(SEXP, SEXP);
 
 // For unit tests
 extern SEXP chr_prepend(SEXP, SEXP);
@@ -115,6 +117,7 @@ static const R_CallMethodDef call_entries[] = {
   {"rlang_test_chr_append",     (DL_FUNC) &chr_append, 2},
   {"rlang_test_r_warn",         (DL_FUNC) &rlang_test_r_warn, 1},
   {"rlang_test_r_on_exit",      (DL_FUNC) &r_on_exit, 2},
+  {"r_set_env",                 (DL_FUNC) &r_set_env, 2},
   {NULL, NULL, 0}
 };
 

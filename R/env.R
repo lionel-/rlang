@@ -421,18 +421,7 @@ get_env <- function(env = caller_env(), default = NULL) {
 #' fn <- set_env(fn, other_env)
 #' identical(get_env(fn), other_env)
 set_env <- function(env, new_env = caller_env()) {
-  switch_type(env,
-    definition = ,
-    formula = ,
-    closure = {
-      environment(env) <- get_env(new_env)
-      env
-    },
-    environment = get_env(new_env),
-    abort(paste0(
-      "Can't set environment for ", friendly_type(type_of(env)), ""
-    ))
-  )
+  .Call(r_set_env, env, get_env(new_env))
 }
 #' @rdname get_env
 #' @export
