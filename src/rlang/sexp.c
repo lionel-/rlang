@@ -1,5 +1,9 @@
 #include "rlang.h"
 
+bool r_is_shared(SEXP x) {
+  return MAYBE_SHARED(x);
+}
+
 SEXP rlang_sxp_address(SEXP x) {
   static char str[1000];
   snprintf(str, 1000, "%p", (void*) x);
@@ -96,4 +100,14 @@ SEXP r_duplicate(SEXP x, bool shallow) {
 }
 SEXP rlang_duplicate(SEXP x, SEXP shallow) {
   return r_duplicate(x, r_as_bool(shallow));
+}
+
+int r_maybe_duplicate(SEXP* addr, bool shallow) {
+  SEXP x = *addr;
+  if (r_is_shared(x)) {
+    *addr = KEEP(r_duplicate(x, shallow));
+    return 1;
+  } else {
+    return 0;
+  }
 }

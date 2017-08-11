@@ -17,10 +17,12 @@ SEXP rlang_get_attrs(SEXP x) {
 }
 
 SEXP r_set_attr(SEXP x, SEXP attr, SEXP value) {
-  if (r_is_shared(x)) {
-    x = r_duplicate(x, true);
-  }
-  return Rf_setAttrib(x, attr, value);
+  int n_kept = r_maybe_duplicate(&x, true);
+
+  r_poke_attr(x, attr, value);
+
+  FREE(n_kept);
+  return x;
 }
 SEXP r_poke_attr(SEXP x, SEXP attr, SEXP value) {
   return Rf_setAttrib(x, attr, value);

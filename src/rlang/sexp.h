@@ -8,6 +8,7 @@
 #define r_length Rf_length
 
 SEXPTYPE r_typeof(SEXP x);
+bool r_is_shared(SEXP x);
 SEXP r_get_attr(SEXP x, SEXP sym);
 
 bool r_inherits(SEXP x, const char* class_);
@@ -30,6 +31,7 @@ bool r_is_missing(SEXP x);
 bool r_is_null(SEXP x);
 
 SEXP r_duplicate(SEXP x, bool shallow);
+int r_maybe_duplicate(SEXP* x, bool shallow);
 
 
 #endif
