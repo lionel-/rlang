@@ -4,6 +4,7 @@
 \alias{get_env}
 \alias{set_env}
 \alias{mut_env_parent}
+\alias{poke_env}
 \title{Get or set the environment of an object}
 \usage{
 get_env(env = caller_env(), default = NULL)
@@ -11,6 +12,7 @@ get_env(env = caller_env(), default = NULL)
 set_env(env, new_env = caller_env())
 
 mut_env_parent(env, new_env)
+poke_env(env, new_env = caller_env())
 }
 \arguments{
 \item{env}{An environment or an object bundling an environment,
@@ -24,6 +26,11 @@ an error is issued.}
 object handled by \code{get_env()}.}
 }
 \description{
+\code{set_env()} has no side effect, it returns a copy of its
+input. \code{poke_env()} changes the environment in place and is
+reserved for expert use.
+}
+\details{
 These functions dispatch internally with methods for functions,
 formulas and frames. If called with a missing argument, the
 environment of the current evaluation frame (see \code{\link[=ctxt_stack]{ctxt_stack()}}) is

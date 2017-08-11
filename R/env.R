@@ -323,6 +323,10 @@ is_empty_env <- function(env) {
 
 #' Get or set the environment of an object
 #'
+#' `set_env()` has no side effect, it returns a copy of its
+#' input. `poke_env()` changes the environment in place and is
+#' reserved for expert use.
+#'
 #' These functions dispatch internally with methods for functions,
 #' formulas and frames. If called with a missing argument, the
 #' environment of the current evaluation frame (see [ctxt_stack()]) is
@@ -425,6 +429,10 @@ set_env <- function(env, new_env = caller_env()) {
 }
 #' @rdname get_env
 #' @export
+poke_env <- function(env, new_env = caller_env()) {
+  .Call(r_poke_env, env, get_env(new_env))
+}
+
 mut_env_parent <- function(env, new_env) {
   .Call(rlang_mut_env_parent, get_env(env), get_env(new_env))
 }

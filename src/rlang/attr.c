@@ -25,5 +25,6 @@ SEXP r_set_attr(SEXP x, SEXP attr, SEXP value) {
   return x;
 }
 SEXP r_poke_attr(SEXP x, SEXP attr, SEXP value) {
-  return Rf_setAttrib(x, attr, value);
+  Rf_setAttrib(x, attr, value);
+  return x;
 }
