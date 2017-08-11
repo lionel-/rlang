@@ -4,10 +4,13 @@ bool r_is_shared(SEXP x) {
   return MAYBE_SHARED(x);
 }
 
-SEXP rlang_sxp_address(SEXP x) {
+const char* r_sxp_address(SEXP x) {
   static char str[1000];
   snprintf(str, 1000, "%p", (void*) x);
-  return Rf_mkString(str);
+  return str;
+}
+SEXP rlang_sxp_address(SEXP x) {
+  return Rf_mkString(r_sxp_address(x));
 }
 
 SEXP rlang_is_reference(SEXP x, SEXP y) {
