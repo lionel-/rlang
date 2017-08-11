@@ -14,5 +14,8 @@ SEXP r_env_get(SEXP env, SEXP sym);
 SEXP r_env_set(SEXP env, SEXP sym, SEXP value);
 SEXP r_ns_env(const char* pkg);
 
+SEXP r_set_env(SEXP x, SEXP new_env);
+SEXP r_poke_env(SEXP x, SEXP new_env);
+
 
 #endif

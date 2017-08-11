@@ -31,3 +31,35 @@ SEXP r_ns_env(const char* pkg) {
     r_abort("Can't find namespace `%s`", pkg);
   return ns;
 }
+
+SEXP r_set_env(SEXP env, SEXP new_env) {
+  if (r_is_environment(env)) {
+    return new_env;
+  }
+
+  int n_kept = r_maybe_duplicate(&env, true);
+  r_poke_env(env, new_env);
+
+  FREE(n_kept);
+  return env;
+}
+SEXP r_poke_env(SEXP env, SEXP new_env) {
+  switch (r_kind(env)) {
+  case CLOSXP: {
+    SET_CLOENV(env, new_env);
+    break;
+  }
+  case LANGSXP: {
+    if (!r_inherits(env, "formula")) {
+      goto abort;
+    }
+    r_poke_attr(env, r_sym(".Environment"), new_env);
+    break;
+  }
+  abort:
+  default: {
+    r_abort("Can't set environment for %s", r_friendly_type(r_type(env)));
+  }}
+
+  return env;
+}
