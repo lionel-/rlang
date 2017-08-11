@@ -29,6 +29,17 @@ bool r_f_has_env(SEXP f) {
   return r_is_env(r_f_env(f));
 }
 
+SEXP r_set_formula_env(SEXP f, SEXP new_env) {
+  int n_kept = r_maybe_duplicate(&f, true);
+  r_poke_formula_env(f, new_env);
+  FREE(n_kept);
+  return f;
+}
+SEXP r_poke_formula_env(SEXP f, SEXP new_env) {
+  r_poke_attr(f, r_sym(".Environment"), new_env);
+  return f;
+}
+
 bool is_formulaish(SEXP x, int scoped, int lhs) {
   if (TYPEOF(x) != LANGSXP)
     return false;
