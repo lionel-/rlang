@@ -13,7 +13,7 @@ SEXP r_new_scalar_string(const char* c_string);
 bool is_string(SEXP x);
 SEXP string(const char* c_string);
 
-const char* r_c_string(SEXP scalar_chr);
+const char* r_as_c_string(SEXP scalar_chr);
 
 SEXP chr_prepend(SEXP chr, SEXP r_new_scalar_string);
 SEXP chr_append(SEXP chr, SEXP r_new_scalar_string);

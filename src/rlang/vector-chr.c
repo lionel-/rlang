@@ -34,7 +34,7 @@ bool is_string(SEXP x) {
   return TYPEOF(x) == STRSXP && r_length(x) == 1;
 }
 
-const char* r_c_string(SEXP scalar_chr) {
+const char* r_as_c_string(SEXP scalar_chr) {
   return CHAR(r_chr_get(scalar_chr, 0));
 }
 
