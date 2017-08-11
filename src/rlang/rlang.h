@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <Rinternals.h>
 
+#include "attr.h"
 #include "cnd.h"
 #include "env.h"
 #include "eval.h"
