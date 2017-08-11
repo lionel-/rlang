@@ -58,7 +58,7 @@ SEXP new_condition_names(SEXP data) {
     r_abort("Conditions can't have a `message` data field");
 
   SEXP nms = KEEP(Rf_allocVector(STRSXP, r_length(data) + 1));
-  mut_chr_at(nms, 0, r_string("message"));
+  mut_chr_at(nms, 0, r_new_scalar_string("message"));
   vec_copy_n(data_nms, r_length(data), nms, 1, 0);
 
   FREE(1);
@@ -75,7 +75,7 @@ SEXP new_condition(SEXP type, SEXP data, SEXP msg) {
   vec_copy_n(data, n_data, cnd, 1, 0);
 
   mut_names(cnd, new_condition_names(data));
-  mut_class(cnd, chr_append(type, r_string("condition")));
+  mut_class(cnd, chr_append(type, r_new_scalar_string("condition")));
 
   FREE(1);
   return cnd;
@@ -115,7 +115,7 @@ void cnd_signal_impl(const char* signaller, SEXP cnd, bool mufflable) {
   ++n_protect;
 
   if (mufflable) {
-    SEXP classes = KEEP(chr_prepend(sxp_class(cnd), r_string("mufflable")));
+    SEXP classes = KEEP(chr_prepend(sxp_class(cnd), r_new_scalar_string("mufflable")));
     ++n_protect;
     SETCADR(lang, set_class(cnd, classes));
 
