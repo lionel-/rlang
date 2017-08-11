@@ -14,7 +14,7 @@ SEXP rlang_is_reference(SEXP x, SEXP y) {
   return r_scalar_lgl(x == y);
 }
 
-SEXPTYPE r_typeof(SEXP x) {
+SEXPTYPE r_kind(SEXP x) {
   return TYPEOF(x);
 }
 

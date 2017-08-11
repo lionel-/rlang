@@ -7,8 +7,9 @@
 #define r_null R_NilValue
 #define r_length Rf_length
 
-SEXPTYPE r_typeof(SEXP x);
 bool r_is_shared(SEXP x);
+
+SEXPTYPE r_kind(SEXP x);
 SEXP r_get_attr(SEXP x, SEXP sym);
 
 bool r_inherits(SEXP x, const char* class_);

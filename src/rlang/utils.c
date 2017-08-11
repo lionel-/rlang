@@ -158,7 +158,7 @@ SEXP pkg_obj(SEXP env, const char* name) {
   SEXP obj = r_env_get(env, r_sym(name));
 
   // Can be a promise to a lazyLoadDBfetch() call
-  if (r_typeof(obj) == PROMSXP)
+  if (r_kind(obj) == PROMSXP)
     obj = r_eval(obj, r_empty_env);
 
   return obj;
