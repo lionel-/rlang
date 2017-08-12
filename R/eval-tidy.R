@@ -324,3 +324,26 @@ f_self_eval <- function(overscope, overscope_top) {
     )
   }
 }
+
+set_overscope <- function(x, overscope) {
+  x <- duplicate(x)
+  poke_overscope(x, overscope)
+  x
+}
+poke_overscope <- function(x, overscope) {
+  if (is_quosure(x, with_data = TRUE)) {
+    poke_env(x, overscope)
+    poke_overscope(node_cdr(x), overscope)
+    return(NULL)
+  }
+
+  if (is_node(x)) {
+    node <- x
+    while (!is_null(node)) {
+      poke_overscope(node_car(node), overscope)
+      node <- node_cdr(node)
+    }
+  }
+
+  NULL
+}

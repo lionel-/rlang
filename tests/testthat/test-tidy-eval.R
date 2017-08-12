@@ -234,3 +234,16 @@ test_that("can call tilde with named arguments (#226)", {
   expect_equal(eval_tidy(quote(`~`(foo = x, bar = y))), x ~ y)
   expect_equal(eval_tidy(quote(`~`(foo = x, bar = y, baz = z))), `~`(foo = x, bar = y, baz = z))
 })
+
+test_that("update_quosures() change environment of all data quosures", {
+  x <- locally(quo(list(!! locally(quo(foo)), !! locally(safe_quo(bar)))))
+  y <- set_overscope(x, empty_env())
+
+  expect_false(identical(sxp_address(x), sxp_address(y)))
+  expect_identical(get_env(y), empty_env())
+
+  unsafe <- y[[2]][[2]]
+  safe <- y[[2]][[3]]
+  expect_identical(get_env(unsafe), empty_env())
+  expect_false(is_reference(get_env(safe), empty_env()))
+})
