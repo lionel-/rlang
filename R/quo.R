@@ -55,6 +55,28 @@
 #' [quasiquotation] page goes in detail over the unquoting and
 #' splicing operators.
 #'
+#' @section Data quosures and safe quosures:
+#'
+#' By default, quosures are created with user data support. Such data
+#' quosures can refer to symbol that you expect to find in a user-
+#' supplied data frame. For instance, `quo(list(country, age))` might
+#' expect `country` and `age` to be found in user data rather than in
+#' the current environment.
+#'
+#' Data quosures are very useful with data grammars such as dplyr and
+#' ggplot2. However, there are cases where user data is irrelevant and
+#' constitutes a possible source of bugs. This is because data is a
+#' moving part and you can never know ahead of time what columns or
+#' fields might override objects in your quosures. In these cases, you
+#' should create _safe quosures_ which are never evaluated in a data
+#' context.
+#'
+#' * `quo()`, `enquo()`, `new_quosure()`, etc all accept the
+#'   `with_data` argument. Set it to `TRUE` to disable the data
+#'   context.
+#'
+#' * `safe_quo()` is a shortcut for `quo(with_data = FALSE)`.
+#'
 #' @param expr An expression.
 #' @param arg A symbol referring to an argument. The expression
 #'   supplied to that argument will be captured unevaluated.

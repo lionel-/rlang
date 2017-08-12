@@ -83,6 +83,30 @@ vignette provides an overview of this approach. The
 splicing operators.
 }
 
+\section{Data quosures and safe quosures}{
+
+
+By default, quosures are created with user data support. Such data
+quosures can refer to symbol that you expect to find in a user-
+supplied data frame. For instance, \code{quo(list(country, age))} might
+expect \code{country} and \code{age} to be found in user data rather than in
+the current environment.
+
+Data quosures are very useful with data grammars such as dplyr and
+ggplot2. However, there are cases where user data is irrelevant and
+constitutes a possible source of bugs. This is because data is a
+moving part and you can never know ahead of time what columns or
+fields might override objects in your quosures. In these cases, you
+should create \emph{safe quosures} which are never evaluated in a data
+context.
+\itemize{
+\item \code{quo()}, \code{enquo()}, \code{new_quosure()}, etc all accept the
+\code{with_data} argument. Set it to \code{TRUE} to disable the data
+context.
+\item \code{safe_quo()} is a shortcut for \code{quo(with_data = FALSE)}.
+}
+}
+
 \examples{
 # quo() is a quotation function just like expr() and quote():
 expr(mean(1:10 * 2))
