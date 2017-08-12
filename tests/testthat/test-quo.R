@@ -74,20 +74,20 @@ test_that("quo_expr() warns", {
   expect_warning(quo_expr(quo(list(!! quo(foo))), warn = TRUE), "inner quosure")
 })
 
-test_that("quosure is constructed with `overscope` attribute", {
-  expect_true(attr(quo(foo), "overscope"))
-  expect_false(attr(quo(foo, FALSE), "overscope"))
+test_that("quosure is constructed with `with_data` attribute", {
+  expect_true(attr(quo(foo), "with_data"))
+  expect_false(attr(quo(foo, FALSE), "with_data"))
 
-  expect_true(all(map_lgl(quos(foo, bar), attr, "overscope")))
-  expect_false(any(map_lgl(quos(foo, bar, .overscope = FALSE), attr, "overscope")))
+  expect_true(all(map_lgl(quos(foo, bar), attr, "with_data")))
+  expect_false(any(map_lgl(quos(foo, bar, .with_data = FALSE), attr, "with_data")))
 })
 
-test_that("is_quosure() partial matches on overscope attribute", {
+test_that("is_quosure() partial matches on `with_data` attribute", {
   quo <- quo(foo)
-  expect_true(is_quosure(quo, overscope = TRUE))
-  expect_false(is_quosure(quo, overscope = FALSE))
+  expect_true(is_quosure(quo, with_data = TRUE))
+  expect_false(is_quosure(quo, with_data = FALSE))
 
-  safe_quo <- quo(foo, FALSE)
-  expect_true(is_quosure(safe_quo, overscope = FALSE))
-  expect_false(is_quosure(safe_quo, overscope = TRUE))
+  safe_quo <- safe_quo(foo)
+  expect_true(is_quosure(safe_quo, with_data = FALSE))
+  expect_false(is_quosure(safe_quo, with_data = TRUE))
 })

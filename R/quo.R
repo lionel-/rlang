@@ -58,9 +58,9 @@
 #' @param expr An expression.
 #' @param arg A symbol referring to an argument. The expression
 #'   supplied to that argument will be captured unevaluated.
-#' @param overscope,.overscope Whether the quosure may be overscoped
-#'   by user data. If the quosure is not meant to be evaluated in a
-#'   data context, it is preferable to disable overscoping.
+#' @param with_data,.with_data Whether the quosure may be overridden
+#'   by user data. This should be set to `FALSE` if the quosure is not
+#'   meant to be evaluated in a data context.
 #' @return A formula whose right-hand side contains the quoted
 #'   expression supplied as argument.
 #' @seealso [expr()] for quoting a raw expression with quasiquotation.
@@ -180,24 +180,29 @@
 #' quo
 #' eval_tidy(quo)
 #' @name quosure
-quo <- function(expr, overscope = TRUE) {
-  enquo(expr, overscope = overscope)
+quo <- function(expr, with_data = TRUE) {
+  enquo(expr, with_data = with_data)
+}
+#' @rdname quosure
+#' @export
+safe_quo <- function(expr) {
+  enquo(expr, with_data = FALSE)
 }
 #' @rdname quosure
 #' @inheritParams as_quosure
 #' @export
-new_quosure <- function(expr, env = caller_env(), overscope = TRUE) {
+new_quosure <- function(expr, env = caller_env(), with_data = TRUE) {
   quo <- new_formula(NULL, expr, env)
   set_attrs(quo,
     class = c("quosure", "formula"),
-    overscope = overscope
+    with_data = with_data
   )
 }
 #' @rdname quosure
 #' @export
-enquo <- function(arg, overscope = TRUE) {
+enquo <- function(arg, with_data = TRUE) {
   if (missing(arg)) {
-    quo <- new_quosure(missing_arg(), empty_env(), overscope)
+    quo <- new_quosure(missing_arg(), empty_env(), with_data)
     return(quo)
   }
 
@@ -207,16 +212,16 @@ enquo <- function(arg, overscope = TRUE) {
     capture <- lang(captureArg, substitute(arg))
     arg <- eval_bare(capture, caller_env())
     expr <- .Call(rlang_interp, arg$expr, arg$env, TRUE)
-    forward_quosure(expr, arg$env, overscope)
+    forward_quosure(expr, arg$env, with_data)
   }
 }
-forward_quosure <- function(expr, env, overscope = TRUE) {
-  if (is_quosure(expr, overscope)) {
+forward_quosure <- function(expr, env, with_data = TRUE) {
+  if (is_quosure(expr, with_data)) {
     expr
   } else if (is_definition(expr)) {
     as_quosureish(expr, env)
   } else if (is_symbolic(expr)) {
-    new_quosure(expr, env, overscope = overscope)
+    new_quosure(expr, env, with_data = with_data)
   } else {
     new_quosure(expr, empty_env())
   }
@@ -268,14 +273,14 @@ str.quosure <- function(object, ...) {
 #'
 #' # Note that two-sided formulas are never quosureish:
 #' is_quosureish(a ~ b)
-is_quosure <- function(x, overscope = NULL) {
+is_quosure <- function(x, with_data = NULL) {
   if (!inherits(x, "quosure")) {
     return(FALSE)
   }
-  if (is_null(overscope)) {
+  if (is_null(with_data)) {
     return(TRUE)
   }
-  identical(attr(x, "overscope"), overscope)
+  identical(attr(x, "with_data"), with_data)
 }
 #' @rdname is_quosure
 #' @export
@@ -286,6 +291,10 @@ is_one_sided <- function(x, lang_sym = sym_tilde) {
   typeof(x) == "language" &&
     identical(node_car(x), lang_sym) &&
     is_null(node_cadr(node_cdr(x)))
+}
+
+can_overscope <- function(quo) {
+  is_true(attr(quo, "with_data"))
 }
 
 #' Coerce object to quosure

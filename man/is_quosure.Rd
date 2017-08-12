@@ -5,7 +5,7 @@
 \alias{is_quosureish}
 \title{Is an object a quosure or quosure-like?}
 \usage{
-is_quosure(x, overscope = NULL)
+is_quosure(x, with_data = NULL)
 
 is_quosureish(x, scoped = NULL)
 }

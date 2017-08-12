@@ -3,22 +3,25 @@
 \name{quosure}
 \alias{quosure}
 \alias{quo}
+\alias{safe_quo}
 \alias{new_quosure}
 \alias{enquo}
 \title{Create quosures}
 \usage{
-quo(expr, overscope = FALSE)
+quo(expr, with_data = TRUE)
 
-new_quosure(expr, env = caller_env(), overscope = TRUE)
+safe_quo(expr)
 
-enquo(arg, overscope = TRUE)
+new_quosure(expr, env = caller_env(), with_data = TRUE)
+
+enquo(arg, with_data = TRUE)
 }
 \arguments{
 \item{expr}{An expression.}
 
-\item{overscope, .overscope}{Whether the quosure may be overscoped
-by user data. If the quosure is not meant to be evaluated in a
-data context, it is preferable to disable overscoping.}
+\item{with_data, .with_data}{Whether the quosure may be overridden
+by user data. This should be set to \code{FALSE} if the quosure is not
+meant to be evaluated in a data context.}
 
 \item{env}{An environment specifying the lexical enclosure of the
 quosure.}

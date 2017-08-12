@@ -67,8 +67,8 @@
 #' dots$defs
 quos <- function(..., .named = FALSE,
                  .ignore_empty = c("trailing", "none", "all"),
-                 .overscope = TRUE) {
-  dots <- dots_enquose(..., `__overscope` = .overscope)
+                 .with_data = TRUE) {
+  dots <- dots_enquose(..., `__with_data` = .with_data)
   dots <- dots_clean_empty(dots, quo_is_missing, .ignore_empty)
 
   if (.named) {
