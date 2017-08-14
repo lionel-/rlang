@@ -247,3 +247,33 @@ test_that("update_quosures() change environment of all data quosures", {
   expect_identical(get_env(unsafe), empty_env())
   expect_false(is_reference(get_env(safe), empty_env()))
 })
+
+test_that("safe quosures are not evaluated in overscope", {
+  skip("TODO")
+
+  foo <- "foo"
+  safe_quo <- quo(foo, data = FALSE)
+  out <- eval_tidy(safe_quo, list(foo = "bar"))
+  expect_identical(out, "foo")
+})
+
+test_that("safe quosures are stack-consistent", {
+  skip("TODO")
+
+  fn <- function() {
+    quo <- quo(return("foo"), overscope = FALSE)
+    called(quo)
+    abort("never reached")
+  }
+  called <- function(quo) {
+    eval_tidy(quo)
+  }
+  expect_identical(fn(), "foo")
+})
+
+test_that("safe quosures can be nested", {
+  skip("TODO")
+  inner <- quo(foo, FALSE)
+  outer <- quo(list(!! inner), FALSE)
+  eval_tidy(outer)
+})
