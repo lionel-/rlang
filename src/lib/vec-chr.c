@@ -2,6 +2,15 @@
 #include "rlang.h"
 
 
+bool r_is_string_any(const char* x, const char** strings, int n) {
+  for (int i = 0; i < n; ++i) {
+    if (strcmp(x, strings[i]) == 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
 sexp* r_new_character(const char** strings, int n) {
   sexp* out = KEEP(r_new_vector(STRSXP, n));
 

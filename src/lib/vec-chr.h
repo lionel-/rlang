@@ -79,6 +79,8 @@ static inline bool r_is_string(sexp* x, const char* string) {
   return true;
 }
 
+bool r_is_string_any(const char* x, const char** strings, int n);
+
 static inline const char* r_str_as_c_string(sexp* str) {
   return CHAR(str);
 }

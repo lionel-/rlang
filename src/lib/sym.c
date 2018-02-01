@@ -36,17 +36,10 @@ bool r_is_symbol(sexp* x, const char* string) {
 bool r_is_symbol_any(sexp* x, const char** strings, int n) {
   if (r_typeof(x) != SYMSXP) {
     return false;
+  } else {
+    const char* name = CHAR(PRINTNAME(x));
+    return r_is_string_any(name, strings, n);
   }
-
-  const char* name = CHAR(PRINTNAME(x));
-
-  for (int i = 0; i < n; ++i) {
-    if (strcmp(name, strings[i]) == 0) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 bool r_is_special_op_sym(sexp* x) {
