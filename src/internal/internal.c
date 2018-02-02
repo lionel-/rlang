@@ -9,11 +9,13 @@ sexp* rlang_constants_get(const char* name) {
 }
 
 
+void rlang_init_dots();
 void rlang_init_eval_tidy();
 
 void rlang_init_internal() {
   // Should be first
   rlang_constants_env = rlang_ns_get("c_constants_env");
 
+  rlang_init_dots();
   rlang_init_eval_tidy();
 }

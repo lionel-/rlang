@@ -226,11 +226,10 @@ enexprs <- function(...,
                    .named = FALSE,
                    .ignore_empty = c("trailing", "none", "all"),
                    .unquote_names = TRUE) {
-  endots(
-    environment(),
+  .Call(rlang_endots,
+    sys.call(),
     parent.frame(),
-    rlang_enexpr,
-    rlang_exprs_interp,
+    FALSE,
     .named,
     .ignore_empty,
     .unquote_names
@@ -248,11 +247,10 @@ ensyms <- function(...,
                    .named = FALSE,
                    .ignore_empty = c("trailing", "none", "all"),
                    .unquote_names = TRUE) {
-  exprs <- endots(
-    environment(),
+  exprs <- .Call(rlang_endots,
+    sys.call(),
     parent.frame(),
-    rlang_enexpr,
-    rlang_exprs_interp,
+    FALSE,
     .named,
     .ignore_empty,
     .unquote_names
@@ -289,56 +287,16 @@ enquos <- function(...,
                    .named = FALSE,
                    .ignore_empty = c("trailing", "none", "all"),
                    .unquote_names = TRUE) {
-  quos <- endots(
-    environment(),
+  .Call(rlang_endots,
+    sys.call(),
     parent.frame(),
-    rlang_enquo,
-    rlang_quos_interp,
+    TRUE,
     .named,
     .ignore_empty,
     .unquote_names
   )
-  structure(quos, class = "quosures")
 }
 
-
-endots <- function(frame, env,
-                   capture_arg, capture_dots,
-                   .named, .ignore_empty, .unquote_names) {
-  sys_call <- eval_bare(quote(sys.call()), frame)
-  syms <- as.list(node_cdr(sys_call))
-
-  if (!is_null(names(syms))) {
-    is_arg <- names(syms) %in% c(".named", ".ignore_empty", ".unquote_names")
-    syms <- syms[!is_arg]
-  }
-
-  # Avoid note about registration problems
-  dot_call <- .Call
-
-  splice_dots <- FALSE
-  dots <- map(syms, function(sym) {
-    if (!is_symbol(sym)) {
-      abort("Inputs to capture must be argument names")
-    }
-    if (identical(sym, dots_sym)) {
-      splice_dots <<- TRUE
-      splice(dot_call(capture_dots, env, .named, .ignore_empty, .unquote_names))
-    } else {
-      dot_call(capture_arg, sym, env)
-    }
-  })
-
-  if (splice_dots) {
-    dots <- flatten_if(dots, is_spliced)
-  }
-  if (.named) {
-    dots <- quos_auto_name(dots)
-  }
-  names(dots) <- names2(dots)
-
-  dots
-}
 
 #' Ensure that list of expressions are all named
 #'

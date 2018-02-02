@@ -74,6 +74,7 @@ extern sexp* rlang_poke_attributes(sexp*, sexp*);
 extern sexp* rlang_enexpr(sexp*, sexp*);
 extern sexp* rlang_ensym(sexp*, sexp*);
 extern sexp* rlang_enquo(sexp*, sexp*);
+extern sexp* rlang_endots(sexp*, sexp*, sexp*, sexp*, sexp*, sexp*);
 extern sexp* rlang_get_expression(sexp*, sexp*);
 extern sexp* rlang_vec_coerce(sexp*, sexp*);
 extern sexp* rlang_mark_object(sexp*);
@@ -191,6 +192,7 @@ static const r_callable r_callables[] = {
   {"rlang_enexpr",              (r_fn_ptr_t) &rlang_enexpr, 2},
   {"rlang_ensym",               (r_fn_ptr_t) &rlang_ensym, 2},
   {"rlang_enquo",               (r_fn_ptr_t) &rlang_enquo, 2},
+  {"rlang_endots",              (r_fn_ptr_t) &rlang_endots, 6},
   {"rlang_get_expression",      (r_fn_ptr_t) &rlang_get_expression, 2},
   {"rlang_vec_coerce",          (r_fn_ptr_t) &rlang_vec_coerce, 2},
   {"rlang_quo_is_symbol",       (r_fn_ptr_t) &rlang_quo_is_symbol, 1},

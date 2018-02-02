@@ -520,3 +520,119 @@ sexp* rlang_dots_flat_list(sexp* frame_env, sexp* named,
   FREE(1);
   return dots;
 }
+
+
+#define ENDOTS_PARAMS_N 3
+const char* endots_params[ENDOTS_PARAMS_N] = {
+  ".named", ".ignore_empty", ".unquote_names"
+};
+
+static void endots_normalise_params(sexp* call, int* dots_idx, int* n_args) {
+  sexp* args = r_node_cdr(call);
+  sexp* parent = call;
+
+  *dots_idx = -1;
+
+  int i = 0;
+  int n = 0;
+  while (args != r_null) {
+    if (r_is_symbol(r_node_car(args), "...")) {
+      *dots_idx = i;
+      r_node_poke_cdr(parent, r_node_cdr(args));
+    } else if (r_is_symbol_any(r_node_tag(args), endots_params, ENDOTS_PARAMS_N)) {
+      r_node_poke_cdr(parent, r_node_cdr(args));
+    } else {
+      ++n;
+      parent = args;
+    }
+
+    args = r_node_cdr(args);
+    ++i;
+  }
+
+  *n_args = n;
+}
+
+static inline sexp* endots_arg(bool quosures, sexp* arg, sexp* env) {
+  if (r_typeof(arg) != r_type_symbol) {
+    r_abort("Inputs to capture must be argument names");
+  }
+  if (quosures) {
+    return rlang_enquo(arg, env);
+  } else {
+    return rlang_enexpr(arg, env);
+  }
+}
+
+
+static sexp* endots_false;
+
+sexp* rlang_endots(sexp* call, sexp* env, sexp* quosures,
+                   sexp* named, sexp* ignore_empty, sexp* unquote_names) {
+  int dots_idx;
+  int n_args;
+  endots_normalise_params(call, &dots_idx, &n_args);
+
+  bool wrap = *r_lgl_deref(quosures);
+
+  sexp* args = r_node_cdr(call);
+
+  sexp* dots = NULL;
+  if (dots_idx >= 0) {
+    if (wrap) {
+      dots = rlang_quos_interp(env, endots_false, ignore_empty, unquote_names);
+    } else {
+      dots = rlang_exprs_interp(env, endots_false, ignore_empty, unquote_names);
+    }
+
+    // Optimise for enquos(...) called with only dots
+    if (n_args == 0) {
+      return maybe_auto_name(dots, named);
+    }
+  }
+
+  r_size_t n_dots = dots ? r_length(dots) : 0;
+  sexp* out = r_new_vector(r_type_list, n_args + n_dots);
+
+  if (wrap) {
+    r_push_class(out, "quosures");
+  }
+
+  init_names(out);
+  sexp* names = r_names(out);
+
+  int count = 0;
+  int n = dots ? dots_idx : n_args;
+  while (count < n) {
+    sexp* tag = r_node_tag(args);
+    if (tag != r_null) {
+      r_chr_poke(names, count, r_sym_str(tag));
+    }
+    r_list_poke(out, count, endots_arg(wrap, r_node_car(args), env));
+    args = r_node_cdr(args);
+    ++count;
+  }
+
+  if (!dots) {
+    return maybe_auto_name(out, named);
+  }
+
+  sexp* dots_names = r_names(dots);
+
+  for (int i = 0; i < n_dots; ++i, ++count) {
+    r_list_poke(out, count, r_list_get(dots, i));
+    r_chr_poke(names, count, r_chr_get(dots_names, i));
+  }
+  for (int i = count; i < n_args; ++i, ++count) {
+    r_list_poke(out, i, endots_arg(wrap, r_node_car(args), env));
+    args = r_node_cdr(args);
+  }
+
+  return maybe_auto_name(out, named);
+}
+
+
+void rlang_init_dots() {
+  endots_false = r_scalar_lgl(0);
+  r_mark_precious(endots_false);
+}
