@@ -106,10 +106,9 @@ eval_bare <- function(expr, env = parent.frame()) {
 #' some subtle implications when evaluting stack sensitive functions
 #' (see help for [eval_bare()]).
 #'
-#' `locally()` is equivalent to the base function
-#' [base::local()] but it produces a much cleaner
-#' evaluation stack, and has stack-consistent semantics. It is thus
-#' more suited for experimenting with the R language.
+#' `locally()` is equivalent to the base function [base::local()] but
+#' evaluates its arguments iteratively. It has the evaluation
+#' semantics of [eval_bare()] rather than [eval()].
 #'
 #'
 #' @section Life cycle:
@@ -118,10 +117,30 @@ eval_bare <- function(expr, env = parent.frame()) {
 #'
 #'
 #' @inheritParams eval_bare
-#' @param env An environment within which to evaluate `expr`. Can be
-#'   an object with a [get_env()] method.
+#' @param ... Arguments to evaluate iteratively in `.env`. They are
+#'   evaluated in order. If named, their result is assigned in `.env`.
+#' @param env,.env The environment where `expr` and `...` will be
+#'   evaluated.
 #' @export
 #' @examples
+#' # locally() is like local() but supports multiple arguments which
+#' # are defined in the environment if named:
+#' locally(foo = "foo", toupper(foo))
+#'
+#' # The above is equivalent to:
+#' local({
+#'   foo <- "foo"
+#'   toupper(foo)
+#' })
+#'
+#' # locally() supports quasiquotation:
+#' exprs <- exprs(
+#'   foo = toupper("foo"),
+#'   message("bar"),
+#'   baz = paste(foo, "baz")
+#' )
+#' locally(!!!exprs, baz)
+#'
 #' # with_env() is handy to create formulas with a given environment:
 #' env <- child_env("rlang")
 #' f <- with_env(env, ~new_formula())
@@ -155,8 +174,21 @@ with_env <- function(env, expr) {
 }
 #' @rdname with_env
 #' @export
-locally <- function(expr) {
-  .Call(rlang_eval, substitute(expr), child_env(caller_env()))
+locally <- function(..., .env = env(caller_env())) {
+  dots <- exprs(...)
+  nms <- names(dots)
+  out <- NULL
+
+  for (i in seq_along(dots)) {
+    out <- .Call(rlang_eval, dots[[i]], .env)
+
+    nm <- nms[[i]]
+    if (nm != "") {
+      .env[[nm]] <- out
+    }
+  }
+
+  out
 }
 
 #' Invoke a function with a list of arguments

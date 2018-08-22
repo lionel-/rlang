@@ -1,13 +1,17 @@
 
 # rlang 0.2.2.9000
 
+* `locally()` now accepts multiple arguments. They are evaluated
+  iteratively, and if named, their result is assigned in the
+  environment.
+
 * `exec()` is a simpler replacement to `invoke()` (#536). `invoke()` has
   been soft-deprecated.
 
 * `env_get()` now evaluates promises and active bindings since these are
   internal objects which should not be exposed at the R level (#554)
 
-* `env_print()` calls `get_env()` on its argument, making it easier to 
+* `env_print()` calls `get_env()` on its argument, making it easier to
   see the environment of closures and quosures (#567).
 
 * You can now unquote quosured symbols as LHS of `:=`. The symbol is

@@ -7,13 +7,16 @@
 \usage{
 with_env(env, expr)
 
-locally(expr)
+locally(..., .env = env(caller_env()))
 }
 \arguments{
-\item{env}{An environment within which to evaluate \code{expr}. Can be
-an object with a \code{\link[=get_env]{get_env()}} method.}
+\item{env, .env}{The environment where \code{expr} and \code{...} will be
+evaluated.}
 
 \item{expr}{An expression to evaluate.}
+
+\item{...}{Arguments to evaluate iteratively in \code{.env}. They are
+evaluated in order. If named, their result is assigned in \code{.env}.}
 }
 \description{
 These functions evaluate \code{expr} within a given environment (\code{env}
@@ -24,10 +27,9 @@ some subtle implications when evaluting stack sensitive functions
 (see help for \code{\link[=eval_bare]{eval_bare()}}).
 }
 \details{
-\code{locally()} is equivalent to the base function
-\code{\link[base:local]{base::local()}} but it produces a much cleaner
-evaluation stack, and has stack-consistent semantics. It is thus
-more suited for experimenting with the R language.
+\code{locally()} is equivalent to the base function \code{\link[base:local]{base::local()}} but
+evaluates its arguments iteratively. It has the evaluation
+semantics of \code{\link[=eval_bare]{eval_bare()}} rather than \code{\link[=eval]{eval()}}.
 }
 \section{Life cycle}{
 
@@ -36,6 +38,24 @@ These functions are experimental. Expect API changes.
 }
 
 \examples{
+# locally() is like local() but supports multiple arguments which
+# are defined in the environment if named:
+locally(foo = "foo", toupper(foo))
+
+# The above is equivalent to:
+local({
+  foo <- "foo"
+  toupper(foo)
+})
+
+# locally() supports quasiquotation:
+exprs <- exprs(
+  foo = toupper("foo"),
+  message("bar"),
+  baz = paste(foo, "baz")
+)
+locally(!!!exprs, baz)
+
 # with_env() is handy to create formulas with a given environment:
 env <- child_env("rlang")
 f <- with_env(env, ~new_formula())
