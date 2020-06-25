@@ -1,4 +1,5 @@
 #include <rlang.h>
+#include "internal.h"
 
 
 sexp* rlang_env_get(sexp* env, sexp* nm) {
@@ -48,6 +49,62 @@ sexp* rlang_env_has(sexp* env, sexp* nms, sexp* inherit) {
   r_poke_names(out, nms);
   FREE(1);
   return out;
+}
+
+static sexp* env_poke_or_zap(sexp* env, sexp* sym, sexp* value);
+
+sexp* rlang_env_poke(sexp* env, sexp* nm, sexp* value, sexp* inherit, sexp* create) {
+  if (!r_is_string(nm)) {
+    r_abort("`nm` must be a string.")
+  }
+  if (!r_is_bool(inherit)) {
+    r_abort("`inherit` must be a string.")
+  }
+  if (!r_is_bool(create)) {
+    r_abort("`create` must be a string.")
+  }
+
+  bool c_inherit = r_lgl_get(inherit, 0);
+  sexp* sym = r_str_as_symbol(r_chr_get(nm, 0));
+
+  sexp* old;
+  if (c_inherit) {
+    old = r_env_find_anywhere(env, sym);
+  } else {
+    old = r_env_find(env, sym);
+  }
+  if (old == r_unbound_sym) {
+    if (!c_create) {
+      r_abort("Can't find existing binding in `env` for \"%s\".",
+              r_sym_get_c_string(sym));
+    }
+    old = rlang_zap;
+  }
+  KEEP(old);
+
+  if (c_inherit) {
+    r_abort("todo");
+  } else {
+    env_poke_or_zap(env, sym, value);
+  }
+
+  ;
+
+  FREE(1);
+}
+
+static
+void env_poke_or_zap(sexp* env, sexp* sym, sexp* value) {
+  if (value == rlang_zap) {
+    r_env_unbind(env, sym);
+  } else {
+    r_env_poke(env, sym);
+  }
+}
+
+static
+void scope_poke(sexp* env) {
+  ;
 }
 
 sexp* rlang_env_unbind(sexp* env, sexp* names, sexp* inherits) {
