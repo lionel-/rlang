@@ -31,3 +31,25 @@ test_that("RHS and LHS must have the same length", {
     "must be the same length"
   )
 })
+
+test_that("can match by name", {
+  local({
+    c(foo = foo, bar = bar) %<-% list(bar = 2, foo = 1)
+    expect_equal(list(foo, bar), list(1, 2))
+  })
+
+  local({
+    c(FOO = foo, BAR = bar) %<-% list(bar = 2, foo = 1)
+    expect_equal(list(FOO, BAR), list(1, 2))
+  })
+
+  local({
+    c(FOO = foo, BAR = bar) %<-% list(3, bar = 2, 4, foo = 1, 5)
+    expect_equal(list(FOO, BAR), list(1, 2))
+  })
+
+  local({
+    c(foo = , bar = ) %<-% list(bar = 2, foo = 1)
+    expect_equal(list(foo, bar), list(1, 2))
+  })
+})
