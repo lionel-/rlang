@@ -47,8 +47,7 @@
 #'
 #' * [is_pairlist()], [as_pairlist()], [is_node()], [is_node_list()]
 #'
-#' * [is_definition()], [new_definition()], [is_formula()],
-#'   [dots_definitions()]
+#' * [dots_definitions()]
 #'
 #' * [local_options()], [with_options()], [push_options()],
 #'   [peek_options()], [peek_option()]

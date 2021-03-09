@@ -12,9 +12,9 @@ is_bare_formula(x, ..., lhs = NULL)
 \arguments{
 \item{x}{An object to test.}
 
-\item{lhs}{A boolean indicating whether the \link[=is_formula]{formula}
-or \link[=is_definition]{definition} has a left-hand side. If \code{NULL},
-the LHS is not inspected.}
+\item{lhs}{A boolean indicating whether the formula has a left-hand
+side. If \code{NULL}, the LHS is not inspected and \code{is_formula()}
+returns \code{TRUE} for both one- and two-sided formulas.}
 
 \item{scoped}{A boolean indicating whether the quosure is scoped,
 that is, has a valid environment attribute. If \code{NULL}, the scope

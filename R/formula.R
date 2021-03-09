@@ -29,9 +29,9 @@ new_formula <- function(lhs, rhs, env = caller_env()) {
 #' @param scoped A boolean indicating whether the quosure is scoped,
 #'   that is, has a valid environment attribute. If `NULL`, the scope
 #'   is not inspected.
-#' @param lhs A boolean indicating whether the [formula][is_formula]
-#'   or [definition][is_definition] has a left-hand side. If `NULL`,
-#'   the LHS is not inspected.
+#' @param lhs A boolean indicating whether the formula has a left-hand
+#'   side. If `NULL`, the LHS is not inspected and `is_formula()`
+#'   returns `TRUE` for both one- and two-sided formulas.
 #' @export
 #' @examples
 #' is_formula(~10)
