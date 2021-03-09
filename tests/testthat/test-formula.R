@@ -89,6 +89,12 @@ test_that("setting environment preserves attributes", {
   expect_identical(f, structure2(~foo, !!!attrs, .Environment = env))
 })
 
+test_that("unevaluated tilde calls are not formulas", {
+  f <- quote(~foo)
+  expect_false(is_bare_formula(f))
+  expect_false(is_formula(f))
+})
+
 
 # Utils --------------------------------------------------------------
 

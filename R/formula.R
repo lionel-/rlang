@@ -57,7 +57,7 @@ is_formula <- function(x, ..., lhs = NULL) {
 #' @export
 is_bare_formula <- function(x, ..., lhs = NULL) {
   check_formula_args(..., env = caller_env())
-  is_formula(x, lhs = lhs) && identical(class, "formula")
+  is_formula(x, lhs = lhs) && identical(class(x), "formula")
 }
 
 check_formula_args <- function(..., scoped, env) {
