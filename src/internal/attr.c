@@ -88,7 +88,7 @@ sexp* rlang_set_names(sexp* x, sexp* mold, sexp* nm, sexp* env) {
     return x;
   }
 
-  if (r_is_function(nm) || r_is_formula(nm, -1, -1)) {
+  if (r_is_function(nm) || r_is_formula(nm, -1)) {
     if (r_names(mold) == r_null) {
       mold = KEEP_N(eval_as_character(mold, env), &n_kept);
     } else {

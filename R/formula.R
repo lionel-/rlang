@@ -14,16 +14,16 @@ new_formula <- function(lhs, rhs, env = caller_env()) {
 
 #' Is object a formula?
 #'
-#' `is_formula()` tests if `x` is a call to `~`. `is_bare_formula()`
+#' @description
+#' `is_formula()` tests whether `x` is a call to `~`. `is_bare_formula()`
 #' tests in addition that `x` does not inherit from anything else than
 #' `"formula"`.
 #'
-#' The `scoped` argument patterns-match on whether the scoped bundled
-#' with the quosure is valid or not. Invalid scopes may happen in
-#' nested quotations like `~~expr`, where the outer quosure is validly
-#' scoped but not the inner one. This is because `~` saves the
-#' environment when it is evaluated, and quoted formulas are by
-#' definition not evaluated.
+#' At parse time, a formula is a simple call to `~` and it does not
+#' have a class or an environment. Once evaluated, the `~` call
+#' becomes a properly structured formula. Unevaluated formulas arise
+#' by quotation, e.g. `~~foo` or `quote(~foo)`. Use the `scoped`
+#' argument to check whether the formula carries an environment.
 #'
 #' @param x An object to test.
 #' @param scoped A boolean indicating whether the quosure is scoped,
@@ -34,14 +34,11 @@ new_formula <- function(lhs, rhs, env = caller_env()) {
 #'   the LHS is not inspected.
 #' @export
 #' @examples
-#' x <- disp ~ am
-#' is_formula(x)
-#'
 #' is_formula(~10)
 #' is_formula(10)
 #'
-#' is_formula(quo(foo))
-#' is_bare_formula(quo(foo))
+#' x <- disp ~ am
+#' is_formula(x)
 #'
 #' # Note that unevaluated formulas are treated as bare formulas even
 #' # though they don't inherit from "formula":
@@ -52,17 +49,21 @@ new_formula <- function(lhs, rhs, env = caller_env()) {
 #' # return FALSE for these unevaluated formulas:
 #' is_bare_formula(f, scoped = TRUE)
 #' is_bare_formula(eval(f), scoped = TRUE)
-is_formula <- function(x, scoped = NULL, lhs = NULL) {
-  .Call(rlang_is_formula, x, scoped, lhs)
+is_formula <- function(x, ..., lhs = NULL) {
+  check_formula_args(..., env = caller_env())
+  .Call(ffi_is_formula, x, lhs)
 }
 #' @rdname is_formula
 #' @export
-is_bare_formula <- function(x, scoped = NULL, lhs = NULL) {
-  if (!is_formula(x, scoped = scoped, lhs = lhs)) {
-    return(FALSE)
+is_bare_formula <- function(x, ..., lhs = NULL) {
+  check_formula_args(..., env = caller_env())
+  is_formula(x, lhs = lhs) && identical(class, "formula")
+}
+
+check_formula_args <- function(..., scoped, env) {
+  if (!missing(scoped)) {
+    signal_soft_deprecated("The `scoped` argument is deprecated as of rlang 1.0.0.", env = env)
   }
-  class <- class(x)
-  is_null(class) || identical(class, "formula")
 }
 
 #' Get or set formula components

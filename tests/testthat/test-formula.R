@@ -60,7 +60,7 @@ test_that("can modify environment", {
 })
 
 test_that("setting RHS preserves attributes", {
-  attrs <- list(foo = "bar", class = "baz")
+  attrs <- list(foo = "bar", class = "formula")
 
   f <- structure2(~foo, !!!attrs)
   f_rhs(f) <- quote(bar)
@@ -69,7 +69,7 @@ test_that("setting RHS preserves attributes", {
 })
 
 test_that("setting LHS preserves attributes", {
-  attrs <- list(foo = "bar", class = "baz")
+  attrs <- list(foo = "bar", class = "formula")
 
   f <- structure2(~foo, !!!attrs)
   f_lhs(f) <- quote(bar)
@@ -81,7 +81,7 @@ test_that("setting LHS preserves attributes", {
 })
 
 test_that("setting environment preserves attributes", {
-  attrs <- list(foo = "bar", class = "baz")
+  attrs <- list(foo = "bar", class = "formula")
   env <- env()
 
   f <- structure2(~foo, !!!attrs)
@@ -104,14 +104,4 @@ test_that("lhs is inspected", {
 
   expect_true(is_formula(foo ~ bar, lhs = TRUE))
   expect_false(is_formula(foo ~ bar, lhs = FALSE))
-})
-
-test_that("definitions are not formulas but are formulaish", {
-  expect_false(is_formula(quote(foo := bar)))
-  expect_true(is_formulaish(quote(foo := bar), lhs = TRUE))
-  expect_false(is_formulaish(quote(foo := bar), lhs = FALSE))
-
-  `:=` <- `~`
-  expect_false(is_formulaish(foo := bar, scoped = TRUE, lhs = FALSE))
-  expect_false(is_formulaish(foo := bar, scoped = FALSE, lhs = TRUE))
 })

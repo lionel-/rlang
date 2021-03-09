@@ -5,43 +5,38 @@
 \alias{is_bare_formula}
 \title{Is object a formula?}
 \usage{
-is_formula(x, scoped = NULL, lhs = NULL)
+is_formula(x, ..., lhs = NULL)
 
-is_bare_formula(x, scoped = NULL, lhs = NULL)
+is_bare_formula(x, ..., lhs = NULL)
 }
 \arguments{
 \item{x}{An object to test.}
 
-\item{scoped}{A boolean indicating whether the quosure is scoped,
-that is, has a valid environment attribute. If \code{NULL}, the scope
-is not inspected.}
-
 \item{lhs}{A boolean indicating whether the \link[=is_formula]{formula}
 or \link[=is_definition]{definition} has a left-hand side. If \code{NULL},
 the LHS is not inspected.}
+
+\item{scoped}{A boolean indicating whether the quosure is scoped,
+that is, has a valid environment attribute. If \code{NULL}, the scope
+is not inspected.}
 }
 \description{
-\code{is_formula()} tests if \code{x} is a call to \code{~}. \code{is_bare_formula()}
+\code{is_formula()} tests whether \code{x} is a call to \code{~}. \code{is_bare_formula()}
 tests in addition that \code{x} does not inherit from anything else than
 \code{"formula"}.
-}
-\details{
-The \code{scoped} argument patterns-match on whether the scoped bundled
-with the quosure is valid or not. Invalid scopes may happen in
-nested quotations like \code{~~expr}, where the outer quosure is validly
-scoped but not the inner one. This is because \code{~} saves the
-environment when it is evaluated, and quoted formulas are by
-definition not evaluated.
+
+At parse time, a formula is a simple call to \code{~} and it does not
+have a class or an environment. Once evaluated, the \code{~} call
+becomes a properly structured formula. Unevaluated formulas arise
+by quotation, e.g. \code{~~foo} or \code{quote(~foo)}. Use the \code{scoped}
+argument to check whether the formula carries an environment.
 }
 \examples{
-x <- disp ~ am
-is_formula(x)
-
 is_formula(~10)
 is_formula(10)
 
-is_formula(quo(foo))
-is_bare_formula(quo(foo))
+x <- disp ~ am
+is_formula(x)
 
 # Note that unevaluated formulas are treated as bare formulas even
 # though they don't inherit from "formula":
