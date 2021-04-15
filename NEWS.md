@@ -2,6 +2,8 @@
 
 * `compat-purrr.R` now longer includes `pluck*` helpers; these used a defintion
   of pluck that predated purrr (#1159). `*_cpl()` has also been removed.
+  The `map*` wrappers now call `as_function()` so that you can pass short
+  anonymous functions that use `~` (#1157).
 
 * `format_error_bullets()` has been renamed to `format_bullets()`.
 
