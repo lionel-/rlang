@@ -1,5 +1,8 @@
 # rlang (development version)
 
+* `compat-purrr.R` now longer includes `pluck*` helpers; these used a defintion
+  of pluck that predated purrr (#1159).
+
 * `format_error_bullets()` has been renamed to `format_bullets()`.
 
 * `format_bullets()` now treats:
