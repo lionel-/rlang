@@ -1,7 +1,7 @@
 # rlang (development version)
 
 * `compat-purrr.R` now longer includes `pluck*` helpers; these used a defintion
-  of pluck that predated purrr (#1159).
+  of pluck that predated purrr (#1159). `*_cpl()` has also been removed.
 
 * `format_error_bullets()` has been renamed to `format_bullets()`.
 
