@@ -61,7 +61,6 @@ cnd_signal <- function(cnd, ...) {
       signalCondition(cnd)
     ))
   )
-  
 }
 validate_cnd_signal_args <- function(cnd,
                                      ...,
