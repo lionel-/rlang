@@ -157,3 +157,62 @@ report_in_progress <- function() {
 
   FALSE
 }
+
+
+#' Options
+#'
+#' @section Defining package options:
+#'
+#' By convention, package options are exported as `mypkg_options`.
+#' This allows `opt_env()` to find it in the package environment.
+#'
+#' ```
+#' #' Global options in mypkg
+#' #' @export
+#' mypkg_options <- new_options()
+#' ```
+#'
+#' 
+#' @export
+new_options <- function() {
+  structure(new.env(parent = emptyenv()), class = "rlib_options")
+}
+
+#' @export
+print.rlib_options <- function(x, ...) {
+  # Needs a more specialised print method
+  env_print(x)
+}
+
+#' @rdname new_options
+#' @export
+opt_env <- function(pkg) {
+  # By convention, package options are exported as `{pkg}_options`
+  binding <- paste0(pkg, "_options")
+
+  ns <- ns_env(pkg)
+  if (env_has(ns, binding)) {
+    return(env_get(ns, binding, default = default))
+  }
+
+  # Also look in the global env to make development easier
+  if (env_has(global_env(), binding)) {
+    return(env_get(global_env(), binding, default = default))
+  }
+
+  abort(sprintf("Can't find options for package %s.", format_pkg(pkg)))
+}
+
+#' @rdname new_options
+#' @export
+opt_bind <- function(..., pkg = NULL) {
+  pkg <- pkg %||% ns_env_name(topenv(caller_env()))
+  env_bind(opt_env(pkg), ...)
+}
+
+#' @rdname new_options
+#' @export
+opt_peek <- function(pkg, opt) {
+  default %<~% abort(sprintf("Option %s does not exist.", format_arg(opt)))
+  env_get(opt_env(pkg), opt, default = default)
+}
