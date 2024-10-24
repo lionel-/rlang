@@ -220,15 +220,16 @@ print.rlang_fake_data_pronoun <- function(...) cat_line("<pronoun>")
 #' @description
 #'
 #' A [data mask][topic-data-mask] is an environment (or possibly
-#' multiple environments forming an ancestry) containing user-supplied
-#' objects. Objects in the mask have precedence over objects in the
-#' environment (i.e. they mask those objects). Many R functions
-#' evaluate quoted expressions in a data mask so these expressions can
-#' refer to objects within the user data.
+#' multiple environments forming an ancestry) that inherits from the
+#' current evaluation environment and contains additional named objects.
+#' These extra variables are added to the evaluation context and, if there
+#' are any name clashes, have precedence over the latter (i.e., they mask
+#' those objects). Data masks are the technique by which columns of a data
+#' frame are made available in special evaluation contexts such as
+#' `dplyr::summarise()`.
 #'
-#' These functions let you construct a tidy eval data mask manually.
-#' They are meant for developers of tidy eval interfaces rather than
-#' for end users.
+#' These functions build a tidy eval data mask manually. They are meant
+#' for developers of tidy eval interfaces rather than for end users.
 #'
 #'
 #' @section Why build a data mask?:
